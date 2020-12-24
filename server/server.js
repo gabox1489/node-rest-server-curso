@@ -11,15 +11,24 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
+app.use(require('./routes/usuario'));
+
+
 
 
 //ESTABLECER LA CONEXION A LA BASE DE DATOS 
 
-mongoose.connect('mongodb://127.0.0.1:27017/cafe', (err, res) => {
+mongoose.connect('mongodb://localhost:27017/cafe', (err, res) => {
     if (err) throw err;
+
 
     console.log('Base de datos Online');
 });
+
+
+
+
+
 
 
 
