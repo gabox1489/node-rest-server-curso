@@ -1,17 +1,19 @@
 const express = require('express');
 const Usuario = require('../models/usuario');
+const { verificacion, verificaAdmin_role } = require('../middlewares/autenticacion');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const app = express();
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificacion, (req, res) => {
+
 
     //REGRESAR LA LISTA DE TODOS LOS USUARIOS CREADOS :
 
-    Usuario.find({ estado: true }, 'nombre email')
-        .skip(3) //PARA SALTARSE LOS PRIMEROS 7 
-        .limit(14) //PARA FILTRAR CUANTOS QUEREMOS MOSTRAR 
+    Usuario.find({ estado: true }, 'nombre email role estado google')
+        //.skip() //PARA SALTARSE LOS PRIMEROS 7 
+        .limit(19) //PARA FILTRAR CUANTOS QUEREMOS MOSTRAR 
         .exec((err, usuarios) => {
             if (err) {
                 return res.status(400).json({
@@ -20,7 +22,7 @@ app.get('/usuario', function(req, res) {
                 });
             }
 
-            Usuario.count({ estado: true }, (err, conteo) => {
+            Usuario.count({ estado: true }, (_err, conteo) => {
                 res.json({
                     ok: true,
                     usuarios,
@@ -31,7 +33,7 @@ app.get('/usuario', function(req, res) {
         });
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificacion, verificaAdmin_role], function(req, res) {
 
     let body = req.body;
 
@@ -68,7 +70,7 @@ app.post('/usuario', function(req, res) {
 });
 
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificacion, verificaAdmin_role], function(req, res) {
 
     let id = req.params.id;
 
@@ -95,7 +97,7 @@ app.put('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificacion, verificaAdmin_role], function(req, res) {
 
     let id = req.params.id;
 
